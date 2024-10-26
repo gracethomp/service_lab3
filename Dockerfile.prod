@@ -1,0 +1,36 @@
+FROM node:16-alpine as build
+
+WORKDIR /app
+
+# Копируем package.json и package-lock.json
+COPY ./package*.json ./
+
+# Устанавливаем зависимости
+RUN npm ci
+
+# Копируем весь проект
+COPY . .
+
+# Выполняем сборку проекта
+RUN npm run build
+
+FROM node:16-alpine
+
+WORKDIR /app
+
+# Копируем только необходимые для продакшн зависимости
+COPY ./package*.json ./
+RUN npm ci --only=production
+
+# Устанавливаем глобально sequelize-cli, если он необходим
+RUN npm install -g sequelize-cli
+
+# Копируем собранные файлы из этапа сборки
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/src/config/config.mjs ./dist/config/config.mjs
+
+# Открываем порт 8000
+EXPOSE 8000
+
+# Запускаем приложение
+CMD ["node", "dist/main.js"]

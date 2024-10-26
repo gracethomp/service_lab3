@@ -1,0 +1,106 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const faker = require('@faker-js/faker').faker;
+const bcrypt = require('bcryptjs');
+
+const jobTitles = [
+  'Software Engineer',
+  'Backend Developer',
+  'Frontend Developer',
+  'Full Stack Developer',
+  'Data Scientist',
+  'Machine Learning Engineer',
+  'DevOps Engineer',
+  'QA Engineer',
+  'Mobile Developer',
+  'Game Developer',
+  'Systems Analyst',
+  'Cloud Engineer',
+  'Security Engineer',
+  'Database Administrator',
+  'Network Engineer',
+  'IT Consultant',
+  'AI Researcher',
+  'Embedded Systems Developer',
+  'Web Developer',
+  'Blockchain Developer',
+  'Junior Software Engineer',
+  'Intern Software Engineer',
+  'Trainee Software Engineer',
+  'Junior Backend Developer',
+  'Trainee Backend Developer',
+  'Intern Backend Developer',
+  'Junior Frontend Developer',
+  'Trainee Frontend Developer',
+  'Intern Frontend Developer',
+  'Junior Full Stack Developer',
+  'Trainee Full Stack Developer',
+  'Intern Full Stack Developer',
+  'Junior Data Scientist',
+  'Trainee Data Scientist',
+  'Intern Data Scientist',
+  'Junior Machine Learning Engineer',
+  'Trainee Machine Learning Engineer',
+  'Intern Machine Learning Engineer',
+  'Junior DevOps Engineer',
+  'Trainee DevOps Engineer',
+  'Intern DevOps Engineer',
+  'Junior QA Engineer',
+  'Trainee QA Engineer',
+  'Intern QA Engineer',
+  'Junior Mobile Developer',
+  'Trainee Mobile Developer',
+  'Intern Mobile Developer',
+  'Junior Game Developer',
+  'Trainee Game Developer',
+  'Intern Game Developer',
+  'Java Developer',
+  'Trainee Java Developer',
+  'Python Developer',
+  'Trainee Python Developer',
+  'JavaScript Developer',
+  'Trainee JavaScript Developer',
+  'C++ Developer',
+  'Trainee C++ Developer',
+  'TypeScript Developer',
+  'Trainee TypeScript Developer',
+  'Ruby on Rails Developer',
+  'Trainee Ruby on Rails Developer',
+  'Node.js Developer',
+  'Trainee Node.js Developer',
+  'React Developer',
+  'Trainee React Developer',
+  'Angular Developer',
+  'Trainee Angular Developer',
+  'Vue.js Developer',
+  'Trainee Vue.js Developer',
+];
+
+module.exports = {
+  async up(queryInterface) {
+    const hashedPassword = await bcrypt.hash('Password123', 10);
+    const mentees = [];
+    for (let i = 0; i < 1000; i++) {
+      mentees.push({
+        email: faker.internet.email(),
+        password: hashedPassword,
+        name: faker.person.firstName(),
+        surname: faker.person.lastName(),
+        jobTitle: jobTitles[Math.floor(Math.random() * jobTitles.length)],
+        experience: faker.number.int({ min: 0, max: 3 }),
+        currentCompany: faker.company.name(),
+        avatar: faker.image.avatar(),
+        isVerified: faker.datatype.boolean(),
+        role: 'Mentee',
+        description: faker.person.bio(),
+        regionId: faker.number.int({ min: 1, max: 6 }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+    return await queryInterface.bulkInsert('Users', mentees, {});
+  },
+
+  async down(queryInterface) {
+    return await queryInterface.bulkDelete('Users', { role: 'Mentee' }, {});
+  },
+};
